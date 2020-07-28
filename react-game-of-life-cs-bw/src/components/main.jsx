@@ -23,6 +23,7 @@ const generateEmptyGrid = () => {
 	return rows
 }
 
+
 const App = () => {
 	const [grid, setGrid] = useState(() => {
 		return generateEmptyGrid()
@@ -33,7 +34,28 @@ const App = () => {
 	const runningRef = useRef(running)
     runningRef.current = running
     
+    const deadEdges = (row, col, previous) => {
+        previous[0] = Array.from(Array(col), () => 0)
+        previous[row - 1] = Array.from(Array(col), () => 0)
+        for(let i = 1; i < row -1; i++){
+            previous[i][0] = 0
+            previous[i][col - 1] = 0
+        }
+        return previous
+    }
 
+    const random = () => {
+        const rows = []
+            for (let i = 0; i < numRows; i++) {
+                rows.push(
+                    Array.from(Array(numCols), () =>
+                    Math.random() > 0.9 ? 1 : 0
+                )
+            )
+        }
+        deadEdges(numRows, numCols, rows)
+        setGrid(rows)
+    }
 
 	const runSimulation = useCallback(() => {
 		if (!runningRef.current) {
@@ -96,16 +118,9 @@ const App = () => {
 			</button>
 			<button
 				onClick={() => {
-					const rows = []
-					for (let i = 0; i < numRows; i++) {
-						rows.push(
-							Array.from(Array(numCols), () =>
-								Math.random() > 0.9 ? 1 : 0
-							)
-						)
-					}
-					setGrid(rows)
-				}}
+                    random()    
+                }
+                }
 			>
 				random
 			</button>
