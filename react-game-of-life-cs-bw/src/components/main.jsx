@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react'
 import produce from 'immer'
+import { useEffect } from 'react'
 
 const numRows = 50
 const numCols = 50
@@ -29,7 +30,14 @@ const App = () => {
 		return generateEmptyGrid()
 	})
     const [generation, setGeneration] = useState(0)
-	const [running, setRunning] = useState(false)
+    const [running, setRunning] = useState(false)
+    const [speed, setSpeed] = useState(0)
+    const [settings, setSettings] = useState({
+        numberOfRows: numRows,
+        numberOfColums: numCols,
+        speed: speed
+    })
+
 
 	const runningRef = useRef(running)
     runningRef.current = running
@@ -57,7 +65,7 @@ const App = () => {
         setGrid(rows)
     }
 
-	const runSimulation = useCallback(() => {
+	const runSimulation = () => {
 		if (!runningRef.current) {
 			return
 		}
@@ -92,8 +100,24 @@ const App = () => {
         setGeneration(prevGeneration => {
             return prevGeneration + 1
         })
-		setTimeout(runSimulation, 100)
-	}, [])
+		setTimeout(runSimulation, Math.floor(1000 / speed))
+    }
+    
+    const handleUpdate = e => {
+        setRunning(false)
+        setSettings({
+            ...settings,
+            [e.target.name]: e.target.value
+        })
+    }
+
+
+    const adjustSpeed = e => {
+        e.preventDefault()
+        console.log(settings.speed)
+        setSpeed(Number(settings.speed))
+        
+    }
 
 	return (
 		<>
@@ -126,6 +150,15 @@ const App = () => {
 			</button>
             <div>
                 Generation: {generation}
+            </div>
+            <div>
+                <label htmlFor='speed'>Speed: </label>
+                <input id='speed' name='speed' value={settings.speed} onChange={handleUpdate} />
+                <button
+                    onClick={adjustSpeed}
+                >
+                    Change Speed!
+                </button>
             </div>
 			<div
 				style={{
