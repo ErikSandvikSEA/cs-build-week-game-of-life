@@ -8,7 +8,7 @@ const Grid = ({
     rows,
     selectBox
 }) => {
-    const width = cols * 14
+    const width = cols * 20
     const rowsArr = []
 
     let boxClass = ""
