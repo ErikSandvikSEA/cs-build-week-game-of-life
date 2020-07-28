@@ -110,7 +110,7 @@ const App = () => {
 				random
 			</button>
             <div>
-                {generation}
+                Generation: {generation}
             </div>
 			<div
 				style={{
@@ -123,10 +123,13 @@ const App = () => {
 						<div
                             key={`${i}-${k}`}
 							onClick={() => {
-								const newGrid = produce(grid, (gridCopy) => {
-									gridCopy[i][k] = grid[i][k] ? 0 : 1
-								})
-								setGrid(newGrid)
+                                if(!running){
+
+                                    const newGrid = produce(grid, (gridCopy) => {
+                                        gridCopy[i][k] = grid[i][k] ? 0 : 1
+                                    })
+                                    setGrid(newGrid)
+                                }
 							}}
 							style={{
 								width: 20,
