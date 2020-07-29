@@ -1,5 +1,6 @@
 body {
 	background-image: url(https://images.unsplash.com/photo-1518803194621-27188ba362c9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1953&q=80);
+	font-family: Calibri;
 }
 
 .box {
@@ -30,9 +31,18 @@ body {
 }
 
 .grid {
-	width: 150px;
-	line-height: 0;
-	margin: auto;
-	box-shadow: 0px 0px 20px white;
-	margin-top: 20px;
+	background-color: rgba(211, 211, 211, 0.767);
+	border: 1px solid black;
+	padding: 2%;
+	box-shadow: 5px 5px 5px #3636363a;
+	border-radius: 5px;
+	width: 55%;
+}
+
+.about {
+	background-color: rgba(211, 211, 211, 0.767);
+	border: 1px solid black;
+	margin: 2%;
+	box-shadow: 5px 5px 5px #3636363a;
+	border-radius: 5px;
 }

@@ -21,8 +21,8 @@ const operations = [
 
 
 const App = () => {
-    let numRows = 50
-    let numCols = 50
+    let numRows = 30
+    let numCols = 30
     const [generation, setGeneration] = useState(0)
     const [running, setRunning] = useState(false)
     const [speed, setSpeed] = useState(3)
@@ -137,6 +137,7 @@ const App = () => {
             />
 
             <div
+                className='grid'
                 style={{
                     display: 'grid',
                     gridTemplateColumns: `repeat(${numCols}, 20px)`,
