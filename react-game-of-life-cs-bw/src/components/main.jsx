@@ -1,17 +1,23 @@
-import React, { useState, useCallback, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import produce from 'immer'
-import { useEffect } from 'react'
+import { 
+    generateEmptyGrid, 
+    deadEdges, 
+    random,
+    revealAbout,
+    pickColor
+} from '../functions'
 
 
 const operations = [
     [0, 1],
-	[0, -1],
-	[1, -1],
-	[-1, 1],
-	[-1, -1],
-	[1, 1],
-	[1, 0],
-	[-1, 0],
+    [0, -1],
+    [1, -1],
+    [-1, 1],
+    [-1, -1],
+    [1, 1],
+    [1, 0],
+    [-1, 0],
 ]
 
 
@@ -19,16 +25,7 @@ const operations = [
 const App = () => {
     const [numRows, setNumRows] = useState(50)
     const [numCols, setNumCols] = useState(50)
-    const generateEmptyGrid = () => {
-        const rows = []
-        for (let i = 0; i < numRows; i++) {
-            rows.push(Array.from(Array(numCols), () => 0))
-        }
-        return rows
-    }
-    const [grid, setGrid] = useState(() => {
-		return generateEmptyGrid()
-	})
+    const [showAbout, setShowAbout] = useState(false)
     const [generation, setGeneration] = useState(0)
     const [running, setRunning] = useState(false)
     const [speed, setSpeed] = useState(3)
@@ -37,107 +34,85 @@ const App = () => {
         numColss: numCols,
         speed: speed
     })
-
-
-	const runningRef = useRef(running)
+    const [grid, setGrid] = useState(() => {
+        return generateEmptyGrid(numRows, numCols)
+    })
+    const runningRef = useRef(running)
     runningRef.current = running
-    
-    const deadEdges = (row, col, previous) => {
-        previous[0] = Array.from(Array(col), () => 0)
-        previous[row - 1] = Array.from(Array(col), () => 0)
-        for(let i = 1; i < row -1; i++){
-            previous[i][0] = 0
-            previous[i][col - 1] = 0
-        }
-        return previous
-    }
 
-    const random = () => {
-        const rows = []
-            for (let i = 0; i < numRows; i++) {
-                rows.push(
-                    Array.from(Array(numCols), () =>
-                    Math.random() > 0.9 ? 1 : 0
-                )
-            )
+    const runSimulation = () => {
+        if (!runningRef.current) {
+            return
         }
-        deadEdges(numRows, numCols, rows)
-        setGrid(rows)
-    }
+        setGrid((g) => {
 
-	const runSimulation = () => {
-		if (!runningRef.current) {
-			return
-		}
-		setGrid((g) => {
-            
             return produce(g, (gridCopy) => {
                 for (let i = 0; i < numRows; i++) {
                     for (let k = 0; k < numCols; k++) {
                         let neighbors = 0
-						operations.forEach(([x, y]) => {
-							const newI = i + x
-							const newK = k + y
-							if (
-								newI >= 0 &&
-								newI < numRows &&
-								newK >= 0 &&
-								newK < numCols
-							) {
-								neighbors += g[newI][newK]
-							}
-						})
+                        operations.forEach(([x, y]) => {
+                            const newI = i + x
+                            const newK = k + y
+                            if (
+                                newI >= 0 &&
+                                newI < numRows &&
+                                newK >= 0 &&
+                                newK < numCols
+                            ) {
+                                neighbors += g[newI][newK]
+                            }
+                        })
 
-						if (neighbors < 2 || neighbors > 3) {
-							gridCopy[i][k] = 0
-						} else if (g[i][k] === 0 && neighbors === 3) {
-							gridCopy[i][k] = 1
-						}
-					}
-				}
-			})
+                        if (neighbors < 2 || neighbors > 3) {
+                            gridCopy[i][k] = 0
+                        } else if (g[i][k] === 0 && neighbors === 3) {
+                            gridCopy[i][k] = 1
+                        }
+                    }
+                }
+            })
         })
         setGeneration(prevGeneration => {
             return prevGeneration + 1
         })
-		setTimeout(runSimulation, Math.floor(1000 / speed))
+        setTimeout(runSimulation, Math.floor(1000 / speed))
     }
 
     const stepSim = () => {
-		setGrid((g) => {
-            
+        setGrid((g) => {
+
             return produce(g, (gridCopy) => {
                 for (let i = 0; i < numRows; i++) {
                     for (let k = 0; k < numCols; k++) {
                         let neighbors = 0
-						operations.forEach(([x, y]) => {
-							const newI = i + x
-							const newK = k + y
-							if (
-								newI >= 0 &&
-								newI < numRows &&
-								newK >= 0 &&
-								newK < numCols
-							) {
-								neighbors += g[newI][newK]
-							}
-						})
+                        operations.forEach(([x, y]) => {
+                            const newI = i + x
+                            const newK = k + y
+                            if (
+                                newI >= 0 &&
+                                newI < numRows &&
+                                newK >= 0 &&
+                                newK < numCols
+                            ) {
+                                neighbors += g[newI][newK]
+                            }
+                        })
 
-						if (neighbors < 2 || neighbors > 3) {
-							gridCopy[i][k] = 0
-						} else if (g[i][k] === 0 && neighbors === 3) {
-							gridCopy[i][k] = 1
-						}
-					}
-				}
-			})
+                        if (neighbors < 2 || neighbors > 3) {
+                            gridCopy[i][k] = 0
+                        } else if (g[i][k] === 0 && neighbors === 3) {
+                            gridCopy[i][k] = 1
+                        }
+                    }
+                }
+            })
         })
         setGeneration(prevGeneration => {
             return prevGeneration + 1
         })
     }
-    
-    const handleUpdate = e => {
+
+    const handleUpdate = (e) => {
         setRunning(false)
         setSettings({
             ...settings,
@@ -145,58 +120,73 @@ const App = () => {
         })
     }
 
-
     const adjustSpeed = e => {
         e.preventDefault()
         console.log(settings.speed)
         setSpeed(Number(settings.speed))
     }
 
-
-    const pickColor = (cell) => {
-        if(cell && (generation % 5 === 0)){
-            return 'dodgerblue'
-        } else if(cell) {
-            return 'teal'
-        } else {
-            return undefined
-        }
-    }
-
-	return (
-		<>
-			<button
-				onClick={() => {
-					setRunning(!running)
-					if (!running) {
-						runningRef.current = true
-						runSimulation()
-					}
-				}}
-			>
-				{running ? 'Pause' : 'Auto'}
-			</button>
-            <button 
+    return (
+        <>
+            <button
+                onClick={() => {
+                    setRunning(!running)
+                    if (!running) {
+                        runningRef.current = true
+                        runSimulation()
+                    }
+                }}
+            >
+                {running ? 'Pause' : 'Auto'}
+            </button>
+            <button
                 onClick={stepSim}
             >
                 Next Gen >
             </button>
-			<button
-				onClick={() => {
-                    setGrid(generateEmptyGrid())
+            <button
+                onClick={() => {
+                    setGrid(generateEmptyGrid(numRows, numCols))
                     setGeneration(0)
-				}}
-			>
-				clear
+                }}
+            >
+                clear
 			</button>
-			<button
-				onClick={() => {
-                    random()    
+            <button
+                onClick={() => {
+                    random(numRows, numCols, deadEdges, setGrid)
                 }
                 }
-			>
-				random
+            >
+                random
 			</button>
+            <button
+                onClick={() => {
+                    revealAbout(showAbout, setShowAbout)
+                }}
+            >
+                About the game
+            </button>
+            {
+                showAbout ?
+                    <div
+                        border='1px solid blue'
+                    >
+                        <ol>
+                            <li>Any live cell with fewer than two live neighbours dies, as if by underpopulation.</li>
+                            <li>Any live cell with two or three live neighbours lives on to the next generation.</li>
+                            <li>Any live cell with more than three live neighbours dies, as if by overpopulation.</li>
+                            <li>Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.</li>
+                        </ol>
+                        <ul>
+                            <li><h3>Custom Features</h3></li>
+                            <li>User can generate a random assortement of live cells onto the grid.</li>
+                            <li>User can adjust speed of rendering generations.</li>
+                            <li>User can either auto play or view generations one at a time.</li>
+                            <li>Player can clear the grid.</li>
+                        </ul>
+                    </div>
+                    : null}
             <div>
                 Generation: {generation}
             </div>
@@ -210,39 +200,39 @@ const App = () => {
                 </button>
             </div>
 
-			<div
-				style={{
-					display: 'grid',
-					gridTemplateColumns: `repeat(${numCols}, 20px)`,
-				}}
-			>
-				{grid.map((rows, i) =>
-					rows.map((col, k) => (
-						<div
+            <div
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(${numCols}, 20px)`,
+                }}
+            >
+                {grid.map((rows, i) =>
+                    rows.map((col, k) => (
+                        <div
                             key={`${i}-${k}`}
-							onClick={() => {
-                                if(!running){
+                            onClick={() => {
+                                if (!running) {
 
                                     const newGrid = produce(grid, (gridCopy) => {
                                         gridCopy[i][k] = grid[i][k] ? 0 : 1
                                     })
                                     setGrid(newGrid)
                                 }
-							}}
-							style={{
-								width: 20,
-								height: 20,
+                            }}
+                            style={{
+                                width: 20,
+                                height: 20,
                                 // backgroundColor: grid[i][k] ? 'dodgerblue' : undefined,
-                                backgroundColor: pickColor(grid[i][k]),
-                                
-								border: 'solid 1px black',
-							}}
-						/>
-					))
-				)}
-			</div>
-		</>
-	)
+                                backgroundColor: pickColor(grid[i][k], generation),
+
+                                border: 'solid 1px black',
+                            }}
+                        />
+                    ))
+                )}
+            </div>
+        </>
+    )
 }
 
 export default App
