@@ -18,6 +18,7 @@ const About = () => {
             <li>User can adjust speed of rendering generations.</li>
             <li>User can either auto play or view generations one at a time.</li>
             <li>Player can clear the grid.</li>
+            <li>Every 5th generation will be indicated by all live cells turning blue.</li>
         </ul>
     </div>
     )
