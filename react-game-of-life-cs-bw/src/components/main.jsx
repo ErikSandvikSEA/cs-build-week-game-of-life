@@ -119,6 +119,7 @@ const App = () => {
     return (
         <>
             <Header 
+
                 setRunning={setRunning} 
                 running={running}
                 runningRef={runningRef}

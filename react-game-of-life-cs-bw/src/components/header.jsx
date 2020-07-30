@@ -35,6 +35,8 @@ const Header = ({
     return (
         <>
             <h1>Conway's Game of Life</h1>
+            <div className='buttons'>
+
             <button
                 onClick={() => {
                     setRunning(!running)
@@ -43,12 +45,12 @@ const Header = ({
                         runSimulation()
                     }
                 }}
-            >
+                >
                 {running ? 'Pause' : 'Auto'}
             </button>
             <button
                 onClick={stepSim}
-            >
+                >
                 Next Gen >
             </button>
             <button
@@ -57,14 +59,14 @@ const Header = ({
                     setGeneration(0)
                     setRunning(false)
                 }}
-            >
+                >
                 clear
 			</button>
             <button
                 onClick={() => {
                     random(numRows, numCols, deadEdges, setGrid)
-                    }
                 }
+            }
             >
                 random
 			</button>
@@ -72,13 +74,14 @@ const Header = ({
                 onClick={() => {
                     revealAbout(showAbout, setShowAbout)
                 }}
-            >
+                >
                 About the game
             </button>
+            </div>
             {
                 showAbout ?
-                    <About />
-                    : null}
+                <About />
+                : null}
             <div>
                 Generation: {generation}
             </div>
@@ -94,7 +97,7 @@ const Header = ({
                     onChange={handleUpdate} />
                 <button
                     onClick={adjustSpeed}
-                >
+                    >
                     Change Speed!
                 </button>
             </div>
