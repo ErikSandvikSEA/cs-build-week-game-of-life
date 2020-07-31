@@ -118,6 +118,7 @@ const App = () => {
     }
     return (
         <>
+            {/* component housing play buttons and about section  */}
             <Header 
 
                 setRunning={setRunning} 
@@ -136,7 +137,7 @@ const App = () => {
                 setSpeed={setSpeed}
 
             />
-
+            {/* component housing the grid itself  */}
             <div
                 className='grid'
                 style={{

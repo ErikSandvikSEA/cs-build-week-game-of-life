@@ -24,7 +24,10 @@ const Header = ({
     speed,
     setSpeed
 }) => {
+    // reveals about section 
     const [showAbout, setShowAbout] = useState(false)
+
+    // used to adjust speed input 
     const adjustSpeed = e => {
         e.preventDefault()
         console.log(settings.speed)
